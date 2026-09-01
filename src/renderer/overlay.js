@@ -22,9 +22,8 @@
   };
 
   const root = document.documentElement;
-  const svg = document.getElementById('duck');
+  const svg = document.getElementById('duck'); // the GIF avatar element
   const wrap = document.getElementById('duck-wrap');
-  const wing = document.getElementById('wing');
   const bubble = document.getElementById('bubble');
   const bubbleText = document.getElementById('bubble-text');
   const bubbleDate = document.getElementById('bubble-date');
@@ -95,22 +94,13 @@
   }
 
   function playGreeting() {
+    // The GIF avatar is always dancing — greeting is just a brief state.
     greeting = true;
     setDuckState();
-    const done = (e) => {
-      if (e.animationName !== 'wing-wave') return;
-      wing.removeEventListener('animationend', done);
+    setTimeout(() => {
       greeting = false;
       setDuckState();
-    };
-    wing.addEventListener('animationend', done);
-    // safety in case animationend never fires
-    setTimeout(() => {
-      if (greeting) {
-        greeting = false;
-        setDuckState();
-      }
-    }, 4000);
+    }, 2200);
   }
 
   function startTalking() {

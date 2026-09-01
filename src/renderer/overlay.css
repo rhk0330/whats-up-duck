@@ -11,13 +11,6 @@
   /* palette */
   --duck-body: #ffd93b;
   --duck-body-dark: #f5b914;
-  --duck-belly: #ffe787;
-  --duck-outline: #4a3b2a;
-  --bill: #ff9f1c;
-  --bill-dark: #e88b0e;
-  --bill-outline: #b96a00;
-  --eye: #2b2b2b;
-  --blush: #ffb3a7;
   --badge: #e53935;
   --bubble-bg: #fffefa;
   --bubble-border: #2b2b2b;
@@ -45,7 +38,7 @@ body,
   background: transparent;
 }
 
-/* ---------- duck ---------- */
+/* ---------- duck (animated GIF avatar) ---------- */
 
 #duck-wrap {
   position: absolute;
@@ -64,105 +57,34 @@ body,
 #duck {
   width: 100%;
   height: 100%;
-  overflow: visible;
+  object-fit: contain;
   filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.35));
+  transition: transform 150ms ease-out;
 }
 
-/* dark outlines keep the duck visible on white wallpapers */
-#body-shape,
-#head-shape,
-#tail,
-#head-tuft,
-#wing-shape {
-  fill: var(--duck-body);
-  stroke: var(--duck-outline);
-  stroke-width: 4;
-  stroke-linejoin: round;
+/* hover perk: a little grow so he notices you */
+.is-perked:not(.is-dragging) {
+  transform: scale(1.05);
 }
 
-#wing-shape {
-  fill: var(--duck-body-dark);
+/* dragging: velocity tilt (set via --tilt by JS) */
+#duck.is-dragging {
+  transform: rotate(calc(var(--tilt) * 1deg));
+  transition: transform 80ms ease-out;
 }
 
-#belly {
-  fill: var(--duck-belly);
+/* new messages waiting: bounce the whole duck on top of his own dance */
+#duck.is-excited {
+  animation: excited-bounce calc(1.2s / var(--speed)) ease-in-out infinite;
 }
 
-#bill-top {
-  fill: var(--bill);
-  stroke: var(--bill-outline);
-  stroke-width: 3;
-  stroke-linejoin: round;
+@keyframes excited-bounce {
+  0%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-12px) scale(1.03); }
+  45% { transform: translateY(0) scale(0.98); }
+  60% { transform: translateY(-6px); }
+  75% { transform: translateY(0); }
 }
-
-#bill-bottom {
-  fill: var(--bill-dark);
-  stroke: var(--bill-outline);
-  stroke-width: 3;
-  stroke-linejoin: round;
-}
-
-#foot-left,
-#foot-right {
-  fill: var(--bill);
-  stroke: var(--bill-outline);
-  stroke-width: 3;
-}
-
-.pupil {
-  fill: var(--eye);
-}
-
-.glint {
-  fill: #ffffff;
-}
-
-.eyelid {
-  fill: var(--duck-body);
-  transform: scaleY(0);
-  transform-box: fill-box;
-  transform-origin: 50% 0%;
-}
-
-#blush circle {
-  fill: var(--blush);
-  opacity: 0.55;
-}
-
-#ground-shadow {
-  fill: rgba(0, 0, 0, 0.18);
-}
-
-#zzz .z {
-  fill: var(--duck-outline);
-  font-family: 'Comic Sans MS', 'Segoe UI', system-ui, sans-serif;
-  font-weight: 700;
-  opacity: 0;
-}
-.z1 { font-size: 16px; }
-.z2 { font-size: 20px; }
-.z3 { font-size: 25px; }
-
-/* transform plumbing: every animated group pivots around its own box */
-#duck-root,
-#head,
-#wing,
-#bill-top,
-#bill-bottom,
-#feet,
-#foot-left,
-#foot-right,
-.pupil {
-  transform-box: fill-box;
-}
-
-#duck-root { transform-origin: 50% 100%; }
-#head { transform-origin: 50% 90%; }
-#wing { transform-origin: 15% 20%; }
-#bill-top { transform-origin: 50% 100%; }
-#bill-bottom { transform-origin: 50% 0%; }
-#foot-left, #foot-right { transform-origin: 50% 50%; }
-.pupil { transform-origin: 50% 50%; }
 
 /* ---------- badge ---------- */
 
@@ -191,184 +113,6 @@ body,
   0% { transform: scale(0); }
   70% { transform: scale(1.15); }
   100% { transform: scale(1); }
-}
-
-/* ================= animation states ================= */
-
-/* idle: gentle bob + occasional blink */
-.is-idle #duck-root {
-  animation: duck-bob calc(2.4s / var(--speed)) ease-in-out infinite;
-}
-.is-idle #ground-shadow {
-  animation: shadow-squash calc(2.4s / var(--speed)) ease-in-out infinite;
-}
-.is-idle .eyelid,
-.is-excited .eyelid,
-.is-greeting .eyelid {
-  animation: blink calc(4.6s / var(--speed)) linear infinite;
-}
-
-@keyframes duck-bob {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-3px); }
-}
-@keyframes shadow-squash {
-  0%, 100% { transform: scaleX(1); }
-  50% { transform: scaleX(0.94); }
-}
-@keyframes blink {
-  0%, 91%, 96%, 100% { transform: scaleY(0); }
-  93% { transform: scaleY(1); }
-}
-
-/* excited: anticipation squash, double hop, wing flaps */
-.is-excited #duck-root {
-  animation: excited-hop calc(2.6s / var(--speed)) ease-in-out infinite;
-}
-.is-excited #wing {
-  animation: wing-flap calc(2.6s / var(--speed)) ease-in-out infinite;
-}
-
-@keyframes excited-hop {
-  0% { transform: scale(1, 1); }
-  8% { transform: scale(1.06, 0.92); }
-  14% { transform: translateY(-12px) scale(0.96, 1.06); }
-  22% { transform: translateY(0) scale(1.05, 0.94); }
-  28% { transform: scale(1, 1); }
-  34% { transform: translateY(-7px) scale(0.98, 1.03); }
-  42% { transform: translateY(0) scale(1.03, 0.96); }
-  48%, 100% { transform: scale(1, 1); }
-}
-@keyframes wing-flap {
-  0%, 8%, 48%, 100% { transform: rotate(0deg); }
-  14% { transform: rotate(-28deg); }
-  20% { transform: rotate(-4deg); }
-  28% { transform: rotate(-28deg); }
-  36% { transform: rotate(-4deg); }
-  42% { transform: rotate(-24deg); }
-}
-
-/* talking: bill hinges while a message is displayed */
-.is-talking #bill-top {
-  animation: bill-top-flap calc(0.28s / var(--speed)) ease-out infinite alternate;
-}
-.is-talking #bill-bottom {
-  animation: bill-bottom-flap calc(0.28s / var(--speed)) ease-out infinite alternate;
-}
-.is-talking #head {
-  animation: head-wobble calc(1.2s / var(--speed)) ease-in-out infinite;
-}
-
-@keyframes bill-top-flap {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(-7deg); }
-}
-@keyframes bill-bottom-flap {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(12deg); }
-}
-@keyframes head-wobble {
-  0%, 100% { transform: rotate(-2deg); }
-  50% { transform: rotate(2deg); }
-}
-
-/* dragging: velocity tilt, dangling feet, startled pupils */
-.is-dragging #duck-root {
-  animation: none;
-  transform: rotate(calc(var(--tilt) * 1deg));
-  transition: transform 80ms ease-out;
-}
-.is-dragging #foot-left {
-  animation: foot-dangle calc(0.3s / var(--speed)) ease-in-out infinite alternate;
-}
-.is-dragging #foot-right {
-  animation: foot-dangle calc(0.3s / var(--speed)) ease-in-out infinite alternate-reverse;
-}
-.is-dragging #wing {
-  animation: wing-flail calc(0.3s / var(--speed)) ease-in-out infinite alternate;
-}
-.is-dragging .pupil {
-  transform: scale(1.2);
-}
-
-@keyframes foot-dangle {
-  from { transform: translateY(3px) rotate(-12deg); }
-  to { transform: translateY(5px) rotate(12deg); }
-}
-@keyframes wing-flail {
-  from { transform: rotate(-30deg); }
-  to { transform: rotate(8deg); }
-}
-
-/* greeting: one wave (JS removes the class on wing animationend) */
-.is-greeting #wing {
-  animation: wing-wave calc(2.2s / var(--speed)) ease-in-out 1;
-}
-.is-greeting #head {
-  animation: head-greet-tilt calc(2.2s / var(--speed)) ease-in-out 1;
-}
-.is-greeting #duck-root {
-  animation: greet-hop calc(2.2s / var(--speed)) ease-out 1;
-}
-
-@keyframes wing-wave {
-  0% { transform: rotate(0deg); }
-  16% { transform: rotate(-120deg); }
-  30% { transform: rotate(-138deg); }
-  44% { transform: rotate(-102deg); }
-  58% { transform: rotate(-138deg); }
-  72% { transform: rotate(-102deg); }
-  84% { transform: rotate(-120deg); }
-  100% { transform: rotate(0deg); }
-}
-@keyframes head-greet-tilt {
-  0%, 100% { transform: rotate(0deg); }
-  20%, 80% { transform: rotate(6deg); }
-}
-@keyframes greet-hop {
-  0% { transform: translateY(0); }
-  8% { transform: scale(1.05, 0.94); }
-  16% { transform: translateY(-9px); }
-  26% { transform: translateY(0) scale(1.03, 0.96); }
-  32%, 100% { transform: none; }
-}
-
-/* sleeping: eyes shut, droop, breathing, floating z's */
-.is-sleeping .eyelid {
-  animation: none;
-  transform: scaleY(1);
-}
-.is-sleeping #head {
-  transform: rotate(8deg) translateY(4px);
-  transition: transform 600ms ease-in-out;
-}
-.is-sleeping #duck-root {
-  animation: breathe calc(3s / var(--speed)) ease-in-out infinite;
-}
-.is-sleeping #zzz .z1 { animation: zfloat calc(3s / var(--speed)) ease-in-out infinite; }
-.is-sleeping #zzz .z2 { animation: zfloat calc(3s / var(--speed)) ease-in-out calc(1s / var(--speed)) infinite; }
-.is-sleeping #zzz .z3 { animation: zfloat calc(3s / var(--speed)) ease-in-out calc(2s / var(--speed)) infinite; }
-
-@keyframes breathe {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.015); }
-}
-@keyframes zfloat {
-  0% { opacity: 0; transform: translate(0, 0) scale(0.8); }
-  40% { opacity: 1; }
-  100% { opacity: 0; transform: translate(6px, -14px) scale(1.1); }
-}
-
-/* hover perk (modifier — suppressed while sleeping or dragging) */
-#head,
-.pupil {
-  transition: transform 150ms ease-out;
-}
-.is-perked:not(.is-sleeping):not(.is-dragging) #head {
-  transform: rotate(3deg);
-}
-.is-perked:not(.is-sleeping):not(.is-dragging) .pupil {
-  transform: scale(1.1);
 }
 
 /* ---------- speech bubble ---------- */
