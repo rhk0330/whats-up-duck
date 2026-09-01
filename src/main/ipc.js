@@ -23,6 +23,10 @@ function register(actions) {
     windows.gestureBegin();
     const menu = Menu.buildFromTemplate([
       { label: 'Check for new messages now', click: () => feedStore.refresh({ manual: true }) },
+      {
+        label: 'Pause / resume dancing',
+        click: () => overlay.webContents.send('duck:toggle-pause'),
+      },
       { label: 'Settings…', click: () => windows.createSettingsWindow() },
       { label: 'Hide for 1 hour', click: () => actions.hideForOneHour() },
       { type: 'separator' },

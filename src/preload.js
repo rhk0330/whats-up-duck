@@ -27,4 +27,5 @@ contextBridge.exposeInMainWorld('duck', {
   onSettingsChanged: (cb) => ipcRenderer.on('settings:changed', (_e, s) => cb(s)),
   onFeedState: (cb) => ipcRenderer.on('feed:state-changed', (_e, s) => cb(s)),
   onGreet: (cb) => ipcRenderer.on('duck:greet', () => cb()),
+  onTogglePause: (cb) => ipcRenderer.on('duck:toggle-pause', () => cb()),
 });

@@ -60,6 +60,33 @@
   let dismissTimer = null;
   let onboardingMode = false;
 
+  // dance pause: a GIF can't be paused, so we swap in a still of its first
+  // frame (captured from the img via canvas once it loads)
+  let paused = false;
+  let stillSrc = null;
+  const danceSrc = svg.src;
+
+  function captureStillFrame() {
+    try {
+      const c = document.createElement('canvas');
+      c.width = svg.naturalWidth;
+      c.height = svg.naturalHeight;
+      c.getContext('2d').drawImage(svg, 0, 0); // draws the GIF's first frame
+      stillSrc = c.toDataURL('image/png');
+    } catch {
+      stillSrc = null;
+    }
+  }
+  if (svg.complete && svg.naturalWidth > 0) captureStillFrame();
+  else svg.addEventListener('load', captureStillFrame, { once: true });
+
+  function togglePause() {
+    if (!stillSrc) return; // capture failed — nothing to swap to
+    paused = !paused;
+    svg.src = paused ? stillSrc : danceSrc;
+    svg.classList.toggle('is-paused', paused);
+  }
+
   // ---------- duck state machine ----------
 
   function setDuckState() {
@@ -201,8 +228,26 @@
     }
     dragging = false;
     wake();
-    await handleDuckClick();
+    registerClick();
   });
+
+  // Single vs double click: a lone click (show message) runs after a short
+  // window; a second click inside it cancels that and toggles the dance.
+  const DOUBLE_CLICK_MS = 300;
+  let clickTimer = null;
+
+  function registerClick() {
+    if (clickTimer) {
+      clearTimeout(clickTimer);
+      clickTimer = null;
+      togglePause();
+      return;
+    }
+    clickTimer = setTimeout(() => {
+      clickTimer = null;
+      handleDuckClick();
+    }, DOUBLE_CLICK_MS);
+  }
 
   window.addEventListener('blur', async () => {
     if (pointerDown) {
@@ -481,6 +526,7 @@
   });
 
   api.onGreet(() => playGreeting());
+  if (api.onTogglePause) api.onTogglePause(() => togglePause());
 
   // ---------- boot ----------
 

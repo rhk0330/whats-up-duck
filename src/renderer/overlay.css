@@ -73,6 +73,11 @@ body,
   transition: transform 80ms ease-out;
 }
 
+/* paused (double-click): freeze everything, including the excited bounce */
+#duck.is-paused {
+  animation: none !important;
+}
+
 /* new messages waiting: bounce the whole duck on top of his own dance */
 #duck.is-excited {
   animation: excited-bounce calc(1.2s / var(--speed)) ease-in-out infinite;
