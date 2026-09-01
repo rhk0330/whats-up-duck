@@ -5,15 +5,12 @@ on:
     tags: ['v*']
 
 permissions:
-  contents: write # electron-builder uploads installers to the GitHub Release
+  contents: write # release job uploads installers to the GitHub Release
 
 jobs:
   build:
     strategy:
       fail-fast: false
-      # Serial: two parallel jobs race to create the SAME GitHub release and
-      # produce two duplicate release records for one tag.
-      max-parallel: 1
       matrix:
         os: [windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
@@ -25,8 +22,30 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
-      - run: npx electron-builder --publish always
+      # Build only — a single release job below publishes everything at once
+      # (letting each matrix job publish creates duplicate release records).
+      - run: npx electron-builder --publish never
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # unsigned builds — stop electron-builder hunting for a mac cert
-          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false' # unsigned; don't hunt for a mac cert
+      - uses: actions/upload-artifact@v4
+        with:
+          name: installers-${{ matrix.os }}
+          path: |
+            dist/*.exe
+            dist/*.dmg
+            dist/*.blockmap
+            dist/latest*.yml
+          if-no-files-found: error
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/*
+          fail_on_unmatched_files: true
