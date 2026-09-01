@@ -1,6 +1,6 @@
 {
   "name": "whats-up-duck",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A cute duck that floats on your desktop and delivers secret messages from a friend.",
   "main": "src/main/main.js",
   "author": "Richard Kim",
