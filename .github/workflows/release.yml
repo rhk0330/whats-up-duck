@@ -11,6 +11,9 @@ jobs:
   build:
     strategy:
       fail-fast: false
+      # Serial: two parallel jobs race to create the SAME GitHub release and
+      # produce two duplicate release records for one tag.
+      max-parallel: 1
       matrix:
         os: [windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
