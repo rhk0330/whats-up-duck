@@ -1,0 +1,55 @@
+name: Add duck message
+
+# Run this from any browser (or the GitHub mobile app):
+# Actions -> "Add duck message" -> Run workflow -> type the message.
+# Requires the DUCK_PASSWORD repository secret.
+
+on:
+  workflow_dispatch:
+    inputs:
+      message:
+        description: 'Message text for the duck'
+        required: true
+        type: string
+      mood:
+        description: 'Optional mood (happy, excited, sleepy, ...)'
+        required: false
+        type: string
+
+# Serialize runs so two quick messages can't race on the same base commit.
+concurrency:
+  group: duck-feed
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  add:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Add message
+        env:
+          DUCK_PASSWORD: ${{ secrets.DUCK_PASSWORD }}
+          # Inputs go through env (not inline ${{ }} in the script) so quotes
+          # or backticks in the message can't inject into the shell.
+          MSG: ${{ inputs.message }}
+          MOOD: ${{ inputs.mood }}
+        run: |
+          # "--" so a message starting with dashes can't be parsed as a flag
+          if [ -n "$MOOD" ]; then
+            node tools/duck.js add --mood "$MOOD" -- "$MSG"
+          else
+            node tools/duck.js add -- "$MSG"
+          fi
+      - name: Commit and push
+        run: |
+          git config user.name "duck-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add feed/messages.enc.json
+          git commit -m "duck: add message"
+          git push

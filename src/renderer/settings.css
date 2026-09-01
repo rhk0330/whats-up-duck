@@ -1,0 +1,159 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font: 13px/1.5 'Segoe UI', system-ui, sans-serif;
+  color: #222;
+  background: #faf8f2;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border-bottom: 1px solid #e4dfd2;
+  background: #fff;
+}
+
+.mini-duck {
+  font-size: 20px;
+}
+
+h1 {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+main {
+  flex: 1;
+  overflow-y: auto;
+  padding: 6px 18px 12px;
+}
+
+section {
+  padding: 12px 0;
+  border-bottom: 1px solid #e4dfd2;
+}
+section:last-child {
+  border-bottom: none;
+}
+
+h2 {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #8a8272;
+  margin-bottom: 8px;
+}
+
+label {
+  display: block;
+  margin: 8px 0 4px;
+  font-weight: 600;
+}
+
+label.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  margin-top: 12px;
+}
+
+input[type='text'],
+input[type='password'],
+input[type='number'],
+select {
+  width: 100%;
+  padding: 6px 9px;
+  border: 1px solid #cfc8b8;
+  border-radius: 7px;
+  background: #fff;
+  font: inherit;
+}
+
+input[type='number'] {
+  width: 90px;
+}
+
+input[type='range'] {
+  width: 100%;
+  accent-color: #f5b914;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0;
+}
+.row input {
+  flex: 1;
+}
+
+button {
+  padding: 6px 14px;
+  border: 1px solid #cfc8b8;
+  border-radius: 7px;
+  background: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+button:hover {
+  background: #f4efe3;
+}
+button.primary {
+  background: #ffd93b;
+  border-color: #b98f00;
+  font-weight: 600;
+}
+button.primary:hover {
+  background: #f5b914;
+}
+button.primary.dirty::after {
+  content: ' •';
+}
+
+#toggle-password {
+  flex: none;
+  padding: 6px 9px;
+}
+
+#test-status {
+  font-size: 12px;
+}
+#test-status.ok { color: #2e7d32; }
+#test-status.error { color: #c62828; }
+#test-status.warn { color: #b26a00; }
+
+.muted {
+  color: #8a8272;
+  font-size: 12px;
+  margin-top: 6px;
+}
+
+details {
+  margin-top: 10px;
+}
+summary {
+  cursor: pointer;
+  color: #8a8272;
+  font-size: 12px;
+}
+
+footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 18px;
+  border-top: 1px solid #e4dfd2;
+  background: #fff;
+}

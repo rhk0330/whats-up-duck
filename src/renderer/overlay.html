@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; script-src 'self'; img-src 'self' data:;" />
+  <title>What's Up Duck</title>
+  <link rel="stylesheet" href="overlay.css" />
+</head>
+<body>
+  <div id="stage">
+    <div id="bubble" hidden>
+      <div id="bubble-text"></div>
+      <div id="bubble-footer">
+        <span id="bubble-date"></span>
+        <span id="bubble-pager">
+          <button id="bubble-prev" type="button" title="Previous message" hidden>&#9666;</button>
+          <span id="bubble-hint"></span>
+        </span>
+      </div>
+      <button id="bubble-settings-btn" type="button" hidden>Open Settings</button>
+    </div>
+
+    <div id="duck-wrap">
+      <svg id="duck" class="duck is-idle" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-label="Ducky">
+        <g id="duck-root">
+          <ellipse id="ground-shadow" cx="100" cy="189" rx="48" ry="7" />
+          <g id="feet">
+            <ellipse id="foot-left" cx="80" cy="180" rx="15" ry="7" />
+            <ellipse id="foot-right" cx="120" cy="180" rx="15" ry="7" />
+          </g>
+          <g id="body">
+            <ellipse id="body-shape" cx="100" cy="137" rx="55" ry="46" />
+            <ellipse id="belly" cx="100" cy="150" rx="34" ry="26" />
+            <path id="tail" d="M50,128 Q34,120 38,102 Q52,108 56,122 Z" />
+            <g id="wing">
+              <path id="wing-shape" d="M120,120 C152,114 160,140 148,156 C137,169 115,163 111,144 C109,131 112,123 120,120 Z" />
+            </g>
+          </g>
+          <g id="head">
+            <circle id="head-shape" cx="100" cy="72" r="45" />
+            <path id="head-tuft" d="M96,29 Q94,13 110,12 Q101,20 106,30 Z" />
+            <g id="blush">
+              <circle id="blush-left" cx="66" cy="88" r="7" />
+              <circle id="blush-right" cx="134" cy="88" r="7" />
+            </g>
+            <g id="eyes">
+              <g id="eye-left" class="eye">
+                <circle class="pupil" cx="80" cy="64" r="9" />
+                <circle class="glint" cx="77" cy="61" r="3" />
+                <rect class="eyelid" x="68" y="52" width="24" height="20" rx="9" />
+              </g>
+              <g id="eye-right" class="eye">
+                <circle class="pupil" cx="120" cy="64" r="9" />
+                <circle class="glint" cx="117" cy="61" r="3" />
+                <rect class="eyelid" x="108" y="52" width="24" height="20" rx="9" />
+              </g>
+            </g>
+            <g id="bill">
+              <path id="bill-top" d="M76,86 Q100,72 124,86 Q100,99 76,86 Z" />
+              <path id="bill-bottom" d="M83,91 Q100,101 117,91 Q100,109 83,91 Z" />
+            </g>
+          </g>
+          <g id="zzz" aria-hidden="true">
+            <text class="z z1" x="142" y="46">z</text>
+            <text class="z z2" x="154" y="34">z</text>
+            <text class="z z3" x="167" y="21">z</text>
+          </g>
+        </g>
+      </svg>
+      <div id="badge" hidden><span id="badge-count"></span></div>
+    </div>
+  </div>
+  <script src="overlay.js"></script>
+</body>
+</html>

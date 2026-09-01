@@ -1,0 +1,81 @@
+{
+  "name": "whats-up-duck",
+  "version": "0.1.0",
+  "description": "A cute duck that floats on your desktop and delivers secret messages from a friend.",
+  "main": "src/main/main.js",
+  "author": "Richard Kim",
+  "license": "MIT",
+  "repository": "github:rhk0330/whats-up-duck",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "electron .",
+    "start:debug": "electron . --debug-overlay",
+    "test": "node --test \"tests/**/*.test.js\"",
+    "icons": "node build/generate-icons.js",
+    "dist": "electron-builder"
+  },
+  "dependencies": {
+    "electron-store": "8.2.0"
+  },
+  "devDependencies": {
+    "electron": "^37.2.0",
+    "electron-builder": "^26.0.0"
+  },
+  "build": {
+    "appId": "com.whatsupduck.app",
+    "productName": "WhatsUpDuck",
+    "directories": {
+      "buildResources": "build",
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "tools/duck-crypto.js",
+      "build/tray.png",
+      "build/trayTemplate.png",
+      "build/trayTemplate@2x.png",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "runAfterFinish": true,
+      "deleteAppDataOnUninstall": false,
+      "artifactName": "${productName}-Setup-${version}.${ext}"
+    },
+    "dmg": {
+      "artifactName": "${productName}-${version}-${arch}.${ext}"
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "universal"
+          ]
+        }
+      ],
+      "identity": null,
+      "category": "public.app-category.entertainment",
+      "extendInfo": {
+        "LSUIElement": true
+      }
+    },
+    "publish": {
+      "provider": "github",
+      "releaseType": "release"
+    }
+  }
+}

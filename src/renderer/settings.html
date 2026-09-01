@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; script-src 'self';" />
+  <title>What's Up Duck — Settings</title>
+  <link rel="stylesheet" href="settings.css" />
+</head>
+<body>
+  <header>
+    <span class="mini-duck">🦆</span>
+    <h1>What's Up Duck</h1>
+  </header>
+
+  <main>
+    <section>
+      <h2>Connection</h2>
+      <label for="password">Secret password</label>
+      <div class="row">
+        <input id="password" type="password" autocomplete="off" placeholder="Enter the password you were given" />
+        <button id="toggle-password" type="button" title="Show/hide">👁</button>
+      </div>
+      <div class="row">
+        <button id="test-connection" type="button">Test connection</button>
+        <span id="test-status"></span>
+      </div>
+      <p id="feed-status" class="muted"></p>
+      <details>
+        <summary>Advanced</summary>
+        <label for="feed-url">Feed URL</label>
+        <input id="feed-url" type="text" spellcheck="false" />
+      </details>
+    </section>
+
+    <section>
+      <h2>Messages</h2>
+      <label for="poll-interval">Check for new messages</label>
+      <select id="poll-interval">
+        <option value="5">Every 5 minutes</option>
+        <option value="15">Every 15 minutes</option>
+        <option value="30">Every 30 minutes</option>
+        <option value="60">Every hour</option>
+        <option value="0">Manually only</option>
+      </select>
+      <label for="auto-dismiss">Auto-dismiss bubble after (seconds, 0 = never)</label>
+      <input id="auto-dismiss" type="number" min="0" max="120" step="1" />
+      <button id="check-now" type="button">Check now</button>
+    </section>
+
+    <section>
+      <h2>Appearance</h2>
+      <label for="duck-size">Duck size <span id="duck-size-value"></span></label>
+      <input id="duck-size" type="range" min="75" max="200" step="5" />
+      <label for="animation-speed">Animation speed <span id="animation-speed-value"></span></label>
+      <input id="animation-speed" type="range" min="0.5" max="2" step="0.1" />
+      <label class="checkbox">
+        <input id="launch-at-login" type="checkbox" />
+        Launch at login
+      </label>
+    </section>
+  </main>
+
+  <footer>
+    <button id="cancel" type="button">Close</button>
+    <button id="save" type="button" class="primary">Save</button>
+  </footer>
+
+  <script src="settings.js"></script>
+</body>
+</html>

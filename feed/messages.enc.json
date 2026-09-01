@@ -1,0 +1,14 @@
+{
+  "format": "whats-up-duck-feed",
+  "version": 1,
+  "kdf": "scrypt",
+  "kdfParams": {
+    "N": 131072,
+    "r": 8,
+    "p": 1
+  },
+  "salt": "v9l+Tni1u+4gYtGvG8Uvpw==",
+  "iv": "t9Lrrxdfa657EZJk",
+  "tag": "e5HrNuGv+SDgtOswLd3gzQ==",
+  "ciphertext": "LpmObcowmRwuKvxFKsU3gRcJWOMHBH4F3LLuLJosWTFpmD4kE7vZ+KetBdp9dchEoPH3yy1LHX1+zX8hsMS7yJwOHOD+0fokI5008yTlxgJDHNLic2rvZKChPfRqordcKPpn30WPUfCPfJliesDFG3hxGafDiMeQ+PF3CL/Jtix+p8o3WW/TrnSTNtGHT9jstZy/zhwsJ06JDA6nfKxPFy87/gOkM2LbSoeF"
+}
