@@ -149,34 +149,18 @@ body,
   white-space: pre-wrap;
 }
 
+#bubble-date {
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--bubble-muted);
+}
+
 #bubble-text::-webkit-scrollbar {
   width: 6px;
 }
 #bubble-text::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.25);
   border-radius: 3px;
-}
-
-#bubble-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  margin-top: 6px;
-  font-size: 11px;
-  color: var(--bubble-muted);
-}
-
-#bubble-prev {
-  border: none;
-  background: none;
-  color: var(--bubble-muted);
-  font-size: 12px;
-  cursor: pointer;
-  padding: 0 3px;
-}
-#bubble-prev:hover {
-  color: var(--bubble-text);
 }
 
 #bubble-settings-btn {

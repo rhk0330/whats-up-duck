@@ -20,8 +20,6 @@ let keyCache = null; // { saltB64, key } — skip scrypt when the salt is unchan
 let pollTimer = null;
 const listeners = new Set();
 
-const CYCLE_WINDOW = 10; // when all seen, clicking cycles the last N messages
-
 function cachePath() {
   return path.join(app.getPath('userData'), 'feed-cache.json');
 }
@@ -65,8 +63,8 @@ async function decryptEnvelope(envelope, password) {
 }
 
 function applyPayload(payload, envelope, etag) {
-  const prevUnseen = unseenList().length;
   messages = payload.messages;
+  cursor = 0; // fresh content: next click starts from the newest message
 
   // Prune seenIds to ids that still exist — removed messages self-clean.
   const feedIds = new Set(messages.map((m) => m.id));
@@ -77,8 +75,6 @@ function applyPayload(payload, envelope, etag) {
   settings.set('lastGoodSalt', envelope.salt);
   consecutiveAuthFailures = 0;
   status = 'READY';
-
-  if (unseenList().length > prevUnseen) settings.set('cycleCursor', 0);
 
   try {
     fs.writeFileSync(
@@ -167,22 +163,23 @@ async function refresh({ manual = false } = {}) {
   return snapshot();
 }
 
-// Click handler queue semantics:
-//  - unseen messages exist -> oldest unseen first, mark seen
-//  - all seen -> cycle the most recent CYCLE_WINDOW messages, newest first
+// ONE list, one message shown at a time: clicks walk it newest-first and wrap
+// around. New arrivals reset the cursor so they show first. Showing a message
+// marks it seen.
+let cursor = 0;
+
 function nextMessage() {
-  const unseen = unseenList();
-  if (unseen.length > 0) {
-    const m = unseen[0];
-    settings.set('seenIds', [...settings.get('seenIds'), m.id]);
-    emit();
-    return { message: m, remainingUnseen: unseen.length - 1 };
-  }
   if (messages.length === 0) return null;
-  const recent = messages.slice(-CYCLE_WINDOW).reverse();
-  const cursor = settings.get('cycleCursor') % recent.length;
-  settings.set('cycleCursor', (cursor + 1) % recent.length);
-  return { message: recent[cursor], remainingUnseen: 0 };
+  const ordered = [...messages].reverse(); // newest first
+  if (cursor >= ordered.length) cursor = 0;
+  const m = ordered[cursor];
+  cursor = (cursor + 1) % ordered.length;
+  const seen = settings.get('seenIds');
+  if (!seen.includes(m.id)) {
+    settings.set('seenIds', [...seen, m.id]);
+    emit();
+  }
+  return { message: m };
 }
 
 // Try a candidate password (and optionally URL) WITHOUT persisting anything.

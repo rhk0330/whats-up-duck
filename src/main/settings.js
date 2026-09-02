@@ -16,7 +16,6 @@ const DEFAULTS = {
   launchAtLogin: false,
   showDuck: true,
   seenIds: [],
-  cycleCursor: 0,
   lastEtag: '',
   lastGoodSalt: '',
   firstRunComplete: false,

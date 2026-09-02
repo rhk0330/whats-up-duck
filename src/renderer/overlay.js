@@ -11,7 +11,6 @@
     getGeometry: async () => ({ winBounds: null, workArea: null, duckSize: 140 }),
     nextMessage: async () => ({
       message: { id: 'demo', text: 'Quack! (browser preview)', date: new Date().toISOString() },
-      remainingUnseen: 2,
     }),
     getFeedState: async () => ({ status: 'READY', unseenCount: 3, messageCount: 5, hasPassword: true }),
     refreshNow: async () => {},
@@ -27,8 +26,6 @@
   const bubble = document.getElementById('bubble');
   const bubbleText = document.getElementById('bubble-text');
   const bubbleDate = document.getElementById('bubble-date');
-  const bubbleHint = document.getElementById('bubble-hint');
-  const bubblePrev = document.getElementById('bubble-prev');
   const bubbleSettingsBtn = document.getElementById('bubble-settings-btn');
   const badge = document.getElementById('badge');
   const badgeCount = document.getElementById('badge-count');
@@ -53,10 +50,7 @@
   let talkTimer = null;
   let sleepTimer = null;
 
-  // bubble session
-  let shown = []; // messages displayed since the bubble opened
-  let shownIdx = -1;
-  let remainingUnseen = 0;
+  // bubble state
   let dismissTimer = null;
   let onboardingMode = false;
 
@@ -282,17 +276,16 @@
       showOnboarding();
       return;
     }
-    const nothingLeft =
-      feedState.unseenCount === 0 && remainingUnseen === 0 && shownIdx >= shown.length - 1;
-    if (!bubble.hidden && nothingLeft) {
+    if (!bubble.hidden) {
       hideBubble();
       setDuckState();
       return;
     }
-    await advance();
+    await showNextMessage();
   }
 
-  async function advance() {
+  // One message at a time; each call walks the list (newest first, wrapping).
+  async function showNextMessage() {
     const res = await api.nextMessage();
     if (!res) {
       showSystemBubble(
@@ -302,37 +295,19 @@
       );
       return;
     }
-    remainingUnseen = res.remainingUnseen;
-    shown.push(res.message);
-    shownIdx = shown.length - 1;
-    renderMessage();
+    onboardingMode = false;
+    bubbleSettingsBtn.hidden = true;
+    bubbleText.textContent = res.message.text;
+    bubbleDate.textContent = formatDate(res.message.date);
+    bubble.hidden = false;
     await placeBubble();
     startTalking();
     armDismissTimer();
-    updateBadge();
-  }
-
-  function renderMessage() {
-    const m = shown[shownIdx];
-    onboardingMode = false;
-    bubbleSettingsBtn.hidden = true;
-    bubbleText.textContent = m.text;
-    bubbleDate.textContent = formatDate(m.date);
-    bubblePrev.hidden = shownIdx <= 0;
-    bubbleHint.textContent =
-      shownIdx < shown.length - 1
-        ? `${shownIdx + 1}/${shown.length}`
-        : remainingUnseen > 0
-          ? `${remainingUnseen} more…`
-          : '';
-    bubble.hidden = false;
   }
 
   function showSystemBubble(text, { withSettingsButton = false } = {}) {
     bubbleText.textContent = text;
     bubbleDate.textContent = '';
-    bubbleHint.textContent = '';
-    bubblePrev.hidden = true;
     bubbleSettingsBtn.hidden = !withSettingsButton;
     bubble.hidden = false;
     placeBubble();
@@ -351,8 +326,6 @@
   function hideBubble() {
     if (bubble.hidden) return;
     bubble.hidden = true;
-    shown = [];
-    shownIdx = -1;
     if (dismissTimer) clearTimeout(dismissTimer);
     if (talkTimer) clearTimeout(talkTimer);
     talking = false;
@@ -383,29 +356,10 @@
     if (!bubble.hidden && !onboardingMode) armDismissTimer();
   });
 
+  // Clicking the bubble shows the next message; clicking the duck closes it.
   bubble.addEventListener('click', async (e) => {
-    if (e.target === bubblePrev || e.target === bubbleSettingsBtn) return;
-    if (onboardingMode) return;
-    if (shownIdx < shown.length - 1) {
-      shownIdx += 1;
-      renderMessage();
-      await placeBubble();
-      armDismissTimer();
-    } else if (remainingUnseen > 0) {
-      await advance();
-    } else {
-      hideBubble();
-      setDuckState();
-    }
-  });
-
-  bubblePrev.addEventListener('click', async () => {
-    if (shownIdx > 0) {
-      shownIdx -= 1;
-      renderMessage();
-      await placeBubble();
-      armDismissTimer();
-    }
+    if (e.target === bubbleSettingsBtn || onboardingMode) return;
+    await showNextMessage();
   });
 
   bubbleSettingsBtn.addEventListener('click', () => api.openSettings());
